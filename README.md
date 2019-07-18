@@ -1,6 +1,6 @@
-# Comparison of decimal floatingpoint types in Swift
+# Comparison of decimal floating-point types in Swift
 
-This is a small project which compares two different implementation for a Swift `Decimal64` struct against the builtin types Double and Decimal.
+This is a small project which compares two different implementations for a Swift `Decimal64` struct against the builtin types Double and Decimal.
 
 ## DecimalFP64
 
