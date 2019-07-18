@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		43791D8B22E0DD1400A308E6 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D8A22E0DD1400A308E6 /* main.swift */; };
+		43791D9822E0DEAC00A308E6 /* Decimal64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D9722E0DEAC00A308E6 /* Decimal64Test.swift */; };
+		43791D9E22E0DF5100A308E6 /* DecimalFP64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D9D22E0DF5100A308E6 /* DecimalFP64.swift */; };
+		43791DA022E0DF6A00A308E6 /* Decimal64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D9F22E0DF6A00A308E6 /* Decimal64.swift */; };
+		43791DA122E0DF8600A308E6 /* Decimal64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D9F22E0DF6A00A308E6 /* Decimal64.swift */; };
+		43791DA222E0DF9900A308E6 /* DecimalFP64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D9D22E0DF5100A308E6 /* DecimalFP64.swift */; };
+		43791DA322E0DF9D00A308E6 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43791D8A22E0DD1400A308E6 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,10 +31,22 @@
 /* Begin PBXFileReference section */
 		43791D8722E0DD1400A308E6 /* Decimal64 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Decimal64; sourceTree = BUILT_PRODUCTS_DIR; };
 		43791D8A22E0DD1400A308E6 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		43791D9522E0DEAC00A308E6 /* Decimal64Test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Decimal64Test.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		43791D9722E0DEAC00A308E6 /* Decimal64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decimal64Test.swift; sourceTree = "<group>"; };
+		43791D9922E0DEAC00A308E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		43791D9D22E0DF5100A308E6 /* DecimalFP64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalFP64.swift; sourceTree = "<group>"; };
+		43791D9F22E0DF6A00A308E6 /* Decimal64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decimal64.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		43791D8422E0DD1400A308E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43791D9222E0DEAC00A308E6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				43791D8922E0DD1400A308E6 /* Decimal64 */,
+				43791D9622E0DEAC00A308E6 /* Decimal64Test */,
 				43791D8822E0DD1400A308E6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				43791D8722E0DD1400A308E6 /* Decimal64 */,
+				43791D9522E0DEAC00A308E6 /* Decimal64Test.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -58,8 +78,19 @@
 			isa = PBXGroup;
 			children = (
 				43791D8A22E0DD1400A308E6 /* main.swift */,
+				43791D9D22E0DF5100A308E6 /* DecimalFP64.swift */,
+				43791D9F22E0DF6A00A308E6 /* Decimal64.swift */,
 			);
 			path = Decimal64;
+			sourceTree = "<group>";
+		};
+		43791D9622E0DEAC00A308E6 /* Decimal64Test */ = {
+			isa = PBXGroup;
+			children = (
+				43791D9722E0DEAC00A308E6 /* Decimal64Test.swift */,
+				43791D9922E0DEAC00A308E6 /* Info.plist */,
+			);
+			path = Decimal64Test;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,6 +113,23 @@
 			productReference = 43791D8722E0DD1400A308E6 /* Decimal64 */;
 			productType = "com.apple.product-type.tool";
 		};
+		43791D9422E0DEAC00A308E6 /* Decimal64Test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 43791D9A22E0DEAC00A308E6 /* Build configuration list for PBXNativeTarget "Decimal64Test" */;
+			buildPhases = (
+				43791D9122E0DEAC00A308E6 /* Sources */,
+				43791D9222E0DEAC00A308E6 /* Frameworks */,
+				43791D9322E0DEAC00A308E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Decimal64Test;
+			productName = Decimal64Test;
+			productReference = 43791D9522E0DEAC00A308E6 /* Decimal64Test.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -93,6 +141,9 @@
 				ORGANIZATIONNAME = "Dirk Schreib";
 				TargetAttributes = {
 					43791D8622E0DD1400A308E6 = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					43791D9422E0DEAC00A308E6 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
 				};
@@ -110,16 +161,40 @@
 			projectRoot = "";
 			targets = (
 				43791D8622E0DD1400A308E6 /* Decimal64 */,
+				43791D9422E0DEAC00A308E6 /* Decimal64Test */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		43791D9322E0DEAC00A308E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		43791D8322E0DD1400A308E6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43791DA022E0DF6A00A308E6 /* Decimal64.swift in Sources */,
 				43791D8B22E0DD1400A308E6 /* main.swift in Sources */,
+				43791D9E22E0DF5100A308E6 /* DecimalFP64.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43791D9122E0DEAC00A308E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43791D9822E0DEAC00A308E6 /* Decimal64Test.swift in Sources */,
+				43791DA222E0DF9900A308E6 /* DecimalFP64.swift in Sources */,
+				43791DA322E0DF9D00A308E6 /* main.swift in Sources */,
+				43791DA122E0DF8600A308E6 /* Decimal64.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +336,42 @@
 			};
 			name = Release;
 		};
+		43791D9B22E0DEAC00A308E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = EK2V9A6N77;
+				INFOPLIST_FILE = Decimal64Test/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.kriddel.Decimal64Test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		43791D9C22E0DEAC00A308E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = EK2V9A6N77;
+				INFOPLIST_FILE = Decimal64Test/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.kriddel.Decimal64Test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -278,6 +389,15 @@
 			buildConfigurations = (
 				43791D8F22E0DD1400A308E6 /* Debug */,
 				43791D9022E0DD1400A308E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		43791D9A22E0DEAC00A308E6 /* Build configuration list for PBXNativeTarget "Decimal64Test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43791D9B22E0DEAC00A308E6 /* Debug */,
+				43791D9C22E0DEAC00A308E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
