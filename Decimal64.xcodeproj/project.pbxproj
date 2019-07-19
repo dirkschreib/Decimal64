@@ -36,6 +36,7 @@
 		43791D9922E0DEAC00A308E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43791D9D22E0DF5100A308E6 /* DecimalFP64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalFP64.swift; sourceTree = "<group>"; };
 		43791D9F22E0DF6A00A308E6 /* Decimal64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decimal64.swift; sourceTree = "<group>"; };
+		43791DA422E191FC00A308E6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +60,7 @@
 		43791D7E22E0DD1400A308E6 = {
 			isa = PBXGroup;
 			children = (
+				43791DA422E191FC00A308E6 /* README.md */,
 				43791D8922E0DD1400A308E6 /* Decimal64 */,
 				43791D9622E0DEAC00A308E6 /* Decimal64Test */,
 				43791D8822E0DD1400A308E6 /* Products */,

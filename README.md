@@ -59,4 +59,6 @@ Key findings:
 - The difference between the two new implementations is negligible.
 - There is a very bad performance penalty if someone tries to use numbers in a generic way.
   (i.e. protocol witness overhead)
+  **Update**
+  After discussion on https://forums.swift.org/t/performance-overhead-for-protocols/27104 Joe Groff opened https://bugs.swift.org/browse/SR-11158 (i.e. rdar://problem/53285593)
 - The own implementation is just 5% slower than the builtin Double (which is unsuitable for most currency calculations)
