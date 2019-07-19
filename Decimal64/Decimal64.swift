@@ -366,12 +366,8 @@ public struct Decimal64
         if  left._data == right._data {
             return false
         }
-        print ("l: ", left)
-        print ("r: ", right)
         let l = left.normalized()
         let r = right.normalized()
-        print ("l: ", l)
-        print ("r: ", r)
 
         if l.exponent == r.exponent {
             return l.mantissa < r.mantissa
@@ -888,12 +884,139 @@ extension Decimal64: CustomStringConvertible {
         // optimized after Instruments showed that this function used 1/4 of all the time...
         //      var ca: [UInt8] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         //      return String(cString: toChar(&ca[0]))
-        var ca: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+        var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
             UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
             UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
             UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
             ) = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-        return String(cString: toChar(&ca.0))
+        return String(cString: toChar(&data.0))
+    }
+}
+
+extension Decimal64: TextOutputStreamable
+{
+    public func write<Target>(to target: inout Target) where Target : TextOutputStream {
+        var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
+            ) = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+
+        var man = mantissa
+
+        if man == 0 {
+            target.write("0")
+            return
+        } else if man < 0 {
+            man = -man
+        }
+
+        var exp = exponent
+        var end = UnsafeMutablePointer<UInt8>( &data.30 )
+        var start = ll2str( man, end )
+
+        if ( exp < 0 ) {
+            end -= 1
+
+            // Try to set a decimal point to make exp equal to zero.
+            // Strip off trailing zeroes.
+            while ( end.pointee == 0x30 ) && ( exp < 0 ) {
+                end -= 1
+                exp += 1
+            }
+
+            if exp < 0 {
+                if exp > start - end - 6 {
+                    // Add maximal 6 additional chars left from digits to get
+                    // 0.nnn, 0.0nnn, 0.00nnn, 0.000nnn, 0.0000nnn or 0.00000nnn.
+                    // The result may have more than 16 digits.
+                    while start - end > exp {
+                        start -= 1
+                        start.pointee = 0x30 // 0
+                    }
+                }
+
+                let dotPos = ( end - start ) + exp + 1;
+                // exp < 0 therefore start + dotPos <= end.
+                if dotPos > 0 {
+                    memmove( start + dotPos + 1, start + dotPos, 1 - exp )
+                    start[ dotPos ] = 0x2E // .
+                    exp = 0
+                    end += 2
+                }
+                else {
+                    if end != start {
+                        let startMinusOne = start.advanced(by: -1)
+                        startMinusOne.pointee = start.pointee
+                        start.pointee = 0x2E // .
+                        start -= 1
+                    }
+
+                    exp = 1 - dotPos
+
+                    end += 1
+                    end.pointee = 0x45 // E
+                    end += 1
+                    end.pointee = 0x2D // -
+
+                    end += 2
+                    if exp >= 10 {
+                        end += 1
+                    }
+                    if exp >= 100 {
+                        end += 1
+                    }
+                    _ = ll2str( Int64(exp), end )
+                }
+            }
+            else {
+                end += 1
+            }
+        }
+        else if exp + end - start > 16 {
+            end -= 1
+
+            exp += end - start //TODO: will it work on 64bit?
+
+            while  end.pointee == 0x30 { // 0
+                end -= 1
+            }
+
+            if end != start {
+                let startMinusOne = start.advanced(by: -1)
+                startMinusOne.pointee = start.pointee
+                start.pointee = 0x2E // .
+                start -= 1
+            }
+            end += 1
+            end.pointee = 0x45 // E
+            end += 1
+            end.pointee = 0x2B // +
+
+            end += 2
+            if exp >= 10 {
+                end += 1
+            }
+            if exp >= 100 {
+                end += 1
+            }
+            _ = ll2str( Int64(exp), end )
+        }
+        else {
+            while exp > 0 {
+                end.pointee = 0x30 // 0
+                end += 1
+                exp -= 1
+            }
+        }
+
+        if sign {
+            start -= 1
+            start.pointee = 0x2D // -
+        }
+
+        end.pointee = 0
+        target._writeASCII(UnsafeBufferPointer<UInt8>(start: start, count: end - start))
     }
 }
 
