@@ -45,6 +45,8 @@ As `Double` and `DecimalFP64` both conformed to the `FloatingPoint` protocol, th
 
 Testing was concluded with Xcode 10.2.1 on an iMac (Retina 5K, 27", 2017) with 4.2 GHz Intel Core i7 and macOS Mojave 10.14.5
 
+**Update** for version v1.1: `Decimal64` and `DecimalFP64` now conform to the `TextOutputStreamable` protocol.
+
 Number Type                  | Debug  | Release | rel.  | Debug v1.1 | Release v1.1 | rel. 
 -|-|-|-|-|-|-
 `Double`                            | 0.100s | 0.094s |  -5%  | 0.102s | 0.095s | -9%
