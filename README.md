@@ -67,5 +67,5 @@ Key findings v1.0:
 
 Key findings v1.1:
 - I have never heard of `TextOutputStreamable` before. (Thanks Brent!) This is tremendous performance benefit.
-- `Decimal64` and `Decimal64` are now faster than `Double`. They need 18% less time to complete the benchmark test.
+- `DecimalFP64` and `Decimal64` are now faster than `Double`. They need 18% less time to complete the benchmark test.
 - The performance difference to `Decimal` is even higher: The benchmark test is completed in 1/5th of the time.
