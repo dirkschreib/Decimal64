@@ -1,11 +1,3 @@
-//
-//  DecimalFP64.swift
-//  Decimal64
-//
-//  Created by Dirk on 18.07.19.
-//  Copyright © 2019 Dirk Schreib. All rights reserved.
-//
-
 import Foundation
 
 /// Constants TenPow<x> = 10^X
@@ -30,28 +22,7 @@ let TenPow17: Int64 =   100_000_000_000_000_000
 let TenPow18: Int64 = 1_000_000_000_000_000_000
 
 /// For faster access to power of tens
-let PowerOf10: [Int64] =
-    [
-        TenPow0,
-        TenPow1,
-        TenPow2,
-        TenPow3,
-        TenPow4,
-        TenPow5,
-        TenPow6,
-        TenPow7,
-        TenPow8,
-        TenPow9,
-        TenPow10,
-        TenPow11,
-        TenPow12,
-        TenPow13,
-        TenPow14,
-        TenPow15,
-        TenPow16,
-        TenPow17,
-        TenPow18
-]
+let PowerOf10: [Int64] = [TenPow0, TenPow1, TenPow2, TenPow3, TenPow4, TenPow5, TenPow6, TenPow7, TenPow8, TenPow9, TenPow10, TenPow11, TenPow12, TenPow13, TenPow14, TenPow15, TenPow16, TenPow17, TenPow18]
 
 /// This methods calculate num * 10^shift.
 ///
@@ -325,8 +296,6 @@ func int64_shiftLeftTo17_8( _ num: inout Int64 ) -> Int
     return ret
 }
 
-
-///////////////////////////////////////////////////////////////
 /// Struct to represent decimal floating point 64 bit numbers.
 ///
 /// This class represents floating point numbers having a 54
@@ -341,22 +310,22 @@ func int64_shiftLeftTo17_8( _ num: inout Int64 ) -> Int
 /// http://www2.hursley.ibm.com/decimal/decarith.pdf
 /// which has moved to a new site:
 /// http://speleotrove.com/decimal/decarith.pdf
-struct DecimalFP64: FloatingPoint
+public struct DecimalFP64: FloatingPoint
 {
-    typealias Magnitude = DecimalFP64
-    var magnitude: Magnitude { return DecimalFP64.abs(self) }
+    public typealias Magnitude = DecimalFP64
+    public var magnitude: Magnitude { return DecimalFP64.abs(self) }
 
-    init<Source>(_ value: Source) where Source : BinaryInteger {
+    public init<Source>(_ value: Source) where Source : BinaryInteger {
         fatalError()
     }
 
-    init?<Source>(exactly value: Source) where Source : BinaryInteger {
+    public init?<Source>(exactly value: Source) where Source : BinaryInteger {
         fatalError()
     }
 
 
     /// A type that represents any written exponent.
-    typealias Exponent = Int
+    public typealias Exponent = Int
 
     /// [spec]: http://ieeexplore.ieee.org/servlet/opac?punumber=4610933
     ///
@@ -1905,7 +1874,7 @@ struct DecimalFP64: FloatingPoint
     ///
     /// - Returns:  true   Both are equal ( A == B ).
     /// - Returns:  false  Both differ ( A != B ).
-    static func ==( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func ==( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     {
         var ret = false
 
@@ -1963,7 +1932,7 @@ struct DecimalFP64: FloatingPoint
     ///
     /// - Returns:  true   A is smaller than B ( A < B ).
     /// - Returns:  false  A is bigger or equal to B ( A >= B ).
-    static func <( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func <( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     {
         var ret = false
         let leftSign = left.getSign()
@@ -2218,25 +2187,25 @@ struct DecimalFP64: FloatingPoint
         }
     }
 
-    static func +(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
+    public static func +(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
         var ret = left
         ret += right
         return ret
     }
 
-    static func -(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
+    public static func -(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
         var ret = left
         ret -= right
         return ret
     }
 
-    static func *(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
+    public static func *(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
         var ret = left
         ret *= right
         return ret
     }
 
-    static func /(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
+    public static func /(_ left: DecimalFP64, _ right: DecimalFP64) -> DecimalFP64 {
         var ret = left
         ret /= right
         return ret
@@ -2247,7 +2216,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:   shift     Number of decimal digits to shift to the left.
     ///
     /// - Returns:  DecimalFP64 ( this * 10^shift )
-    static func <<=( _ left: inout DecimalFP64, _ shift: Int )
+    public static func <<=( _ left: inout DecimalFP64, _ shift: Int )
     {
         left.setComponents( left.getMantissa(), left.getExponent() + shift, left.getSign() )
     }
@@ -2257,7 +2226,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:   shift     Number of decimal digits to shift to the right.
     ///
     /// - Returns:  DecimalFP64 ( this / 10^shift )
-    static func >>=( _ left: inout DecimalFP64, _ shift: Int )
+    public static func >>=( _ left: inout DecimalFP64, _ shift: Int )
     {
         left.setComponents( left.getMantissa(), left.getExponent() - shift, left.getSign() )
     }
@@ -2274,7 +2243,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:    right  Summand.
     ///
     /// - Returns:  ( this + A )
-    static func += (_ left: inout DecimalFP64, _ right: DecimalFP64 )
+    public static func += (_ left: inout DecimalFP64, _ right: DecimalFP64 )
     {
         let sign = left.getSign()
 
@@ -2298,7 +2267,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:    right  Subtrahend
     ///
     /// - Returns:  DecimalFP64 ( this - A )
-    static func -=(_ left: inout DecimalFP64, _ right: DecimalFP64 )
+    public static func -=(_ left: inout DecimalFP64, _ right: DecimalFP64 )
     {
         let sign = left.getSign()
 
@@ -2320,7 +2289,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:   right   Factor.
     ///
     /// - Returns:  DecimalFP64 ( this * B )
-    static func *=( _ left: inout DecimalFP64, _ right: DecimalFP64 )
+    public static func *=( _ left: inout DecimalFP64, _ right: DecimalFP64 )
     {
         var myExp = left.getExponent()
         let rightExp = right.getExponent()
@@ -2409,7 +2378,7 @@ struct DecimalFP64: FloatingPoint
     /// - Parameters:
     ///   - left: number to be divided
     ///   - right: Divisor
-    static func /=( _ left: inout DecimalFP64, _ right: DecimalFP64 )
+    public static func /=( _ left: inout DecimalFP64, _ right: DecimalFP64 )
     {
         var myExp = left.getExponent()
         let rightExp = right.getExponent()
@@ -2493,7 +2462,7 @@ struct DecimalFP64: FloatingPoint
         }
     }
 
-    static prefix func -( _ op: DecimalFP64 ) -> DecimalFP64 { var ret = op; ret.minus(); return ret }
+    public static prefix func -( _ op: DecimalFP64 ) -> DecimalFP64 { var ret = op; ret.minus(); return ret }
 
     mutating func square_root()                        ///< square root
     {
@@ -2592,18 +2561,18 @@ struct DecimalFP64: FloatingPoint
         return 0
     }
 
-    static func !=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func !=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     { return !( left  == right ) }
-    static func >=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func >=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     { return !( left  <  right ) }
-    static func <=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func <=( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     { return !( right < left )  }
-    static func >( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
+    public static func >( _ left: DecimalFP64, _ right: DecimalFP64 ) -> Bool
     { return    right < left     }
 
-    static func<<( _ left: DecimalFP64, _ right: Int ) -> DecimalFP64
+    public static func<<( _ left: DecimalFP64, _ right: Int ) -> DecimalFP64
     { var ret = left; ret <<= right; return ret }
-    static func >>( _ left: DecimalFP64, _ right: Int ) -> DecimalFP64
+    public static func >>( _ left: DecimalFP64, _ right: Int ) -> DecimalFP64
     { var ret = left; ret >>= right; return ret }
 
     static let EXP_MASK = Int64(bitPattern: 0xFF80000000000000)  ///< bitmask for exponent
@@ -2613,7 +2582,7 @@ struct DecimalFP64: FloatingPoint
 
     var Data: Int64 = 0
 
-    init(_ value: Double) {
+    public init(_ value: Double) {
         var isNegative = false
         var value = value
 
@@ -2643,39 +2612,39 @@ struct DecimalFP64: FloatingPoint
 }
 
 extension DecimalFP64: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         return getString()
     }
 }
 
 extension DecimalFP64: ExpressibleByFloatLiteral
 {
-    typealias FloatLiteralType = Double
+    public typealias FloatLiteralType = Double
 
-    init(floatLiteral value: DecimalFP64.FloatLiteralType) {
+    public init(floatLiteral value: DecimalFP64.FloatLiteralType) {
         self.init( value )
     }
 }
 
 extension DecimalFP64: ExpressibleByIntegerLiteral
 {
-    typealias IntegerLiteralType = Int64
+    public typealias IntegerLiteralType = Int64
 
-    init(integerLiteral value: DecimalFP64.IntegerLiteralType) {
+    public init(integerLiteral value: DecimalFP64.IntegerLiteralType) {
         self.init( value )
     }
 }
 
 extension DecimalFP64: Strideable
 {
-    typealias Stride = DecimalFP64
+    public typealias Stride = DecimalFP64
     /// Returns a stride `x` such that `self.advanced(by: x)` approximates
     /// `other`.
     ///
     /// If `Stride` conforms to `Integer`, then `self.advanced(by: x) == other`.
     ///
     /// - Complexity: O(1).
-    func distance(to other: DecimalFP64) -> DecimalFP64 {
+    public func distance(to other: DecimalFP64) -> DecimalFP64 {
         return other - self
     }
 
@@ -2684,14 +2653,14 @@ extension DecimalFP64: Strideable
     /// If `Stride` conforms to `Integer`, then `self.distance(to: x) == n`.
     ///
     /// - Complexity: O(1).
-    func advanced(by n: DecimalFP64) -> DecimalFP64 {
+    public func advanced(by n: DecimalFP64) -> DecimalFP64 {
         return self + n
     }
 }
 
 extension DecimalFP64: TextOutputStreamable
 {
-    func write<Target>(to target: inout Target) where Target : TextOutputStream {
+    public func write<Target>(to target: inout Target) where Target : TextOutputStream {
         var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
             UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
             UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,

@@ -1,56 +1,40 @@
-//
-//  Decimal64.swift
-//  Decimal64
-//
-//  Created by Dirk on 18.07.19.
-//  Copyright © 2019 Dirk Schreib. All rights reserved.
-//
-
 import Foundation
 
-/// start again from scratch
-/// this is a new implementation of Decimal (final name is tbd)
-/// It will use
-/// - 55 bit for mantissa
-/// -  9 bit for exponent
-/// both will be stored as a twos complement in case of negative numbers.
-///  63                                          9 8            0
-///  +--------------------------------------------+--------------+
-///  |           mantissa                         |   exponent   |
-///  +--------------------------------------------+--------------+
-public struct Decimal64
-{
+/// Complete new implementation for a decimal type.
+///
+/// It uses 55 bit for mantissa and 9 bit for exponent; both will be stored as a twos complement in case of negative numbers.
+///
+///     63                                          9 8            0
+///     +--------------------------------------------+-----------+
+///     |                  mantissa                  |  exponent |
+///     +--------------------------------------------+-----------+
+public struct Decimal64 {
+    /// A type that can represent any written exponent.
     public typealias Exponent = Int
+    /// A type that represents the encoded significand of a value.
     public typealias Mantissa = Int64
     public typealias InternalType = Int64
 
     // not sure if this is ever needed (was included in FloatingPoint)
     public static let radix = 10
-
-    static let EXP_SIZE = 9
-    static let MAN_SIZE = 55
-    static let EXP_MASK = Int64(bitPattern: 0x1FF)  ///< bitmask for exponent
-    static let SIG_MASK = Int64(bitPattern: 0x8000000000000000)
-    static let EXP_MIN = -256
-    static let EXP_MAX = 255
+    internal static let EXP_SIZE = 9
+    internal static let MAN_SIZE = 55
+    internal static let EXP_MASK = Int64(bitPattern: 0x1FF)  ///< bitmask for exponent
+    internal static let SIG_MASK = Int64(bitPattern: 0x8000000000000000)
+    internal static let EXP_MIN = -256
+    internal static let EXP_MAX = 255
 
     private var _data: InternalType = 0
 
     // we will not silently convert numbers with more than 16 digits to Decimal
     public init?(_ man: Mantissa) {
-        guard Swift.abs(man) < 10_000_000_000_000_000 else {
-            return nil
-        }
+        guard Swift.abs(man) < 10_000_000_000_000_000 else { return nil }
         _data = man << Decimal64.EXP_SIZE
     }
 
     public init?(_ man: Mantissa, withExponent exp: Exponent) {
-        guard Swift.abs(man) < 10_000_000_000_000_000 else {
-            return nil
-        }
-        guard ( exp >= -256 ) && (exp <= 255 ) else {
-            return nil
-        }
+        guard Swift.abs(man) < 10_000_000_000_000_000,
+              ( exp >= -256 ) && (exp <= 255 ) else { return nil }
         let newExp = ( man < 0 ) ? -exp: exp
         _data = ( man << Decimal64.EXP_SIZE ) | (InternalType(newExp) & Decimal64.EXP_MASK )
     }
@@ -165,8 +149,6 @@ public struct Decimal64
      }
      */
 
-
-    ////////////////////////////////////////////////////////////////////////////
     /// Round a Decimal64 according to the given digits and rounding method.
     ///
     /// @param   scale      The number of digits right from the decimal point.
@@ -530,25 +512,25 @@ public struct Decimal64
 
     }
 
-    static func +(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
+    public static func +(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
         var ret = left
         ret += right
         return ret
     }
 
-    static func -(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
+    public static func -(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
         var ret = left
         ret -= right
         return ret
     }
 
-    static func *(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
+    public static func *(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
         var ret = left
         ret *= right
         return ret
     }
 
-    static func /(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
+    public static func /(_ left: Decimal64, _ right: Decimal64) -> Decimal64 {
         var ret = left
         ret /= right
         return ret
@@ -559,7 +541,7 @@ public struct Decimal64
     /// @param   shift     Number of decimal digits to shift to the left.
     ///
     /// @retval  Decimal64 ( this * 10^shift )
-    static func <<=( _ left: inout Decimal64, _ shift: Int )
+    public static func <<=( _ left: inout Decimal64, _ shift: Int )
     {
         left.setComponents( left.mantissa, left.exponent + shift, left.sign )
     }
@@ -569,7 +551,7 @@ public struct Decimal64
     /// @param   shift     Number of decimal digits to shift to the right.
     ///
     /// @retval  Decimal64 ( this / 10^shift )
-    static func >>=( _ left: inout Decimal64, _ shift: Int )
+    public static func >>=( _ left: inout Decimal64, _ shift: Int )
     {
         left.setComponents( left.mantissa, left.exponent - shift, left.sign )
     }
@@ -586,7 +568,7 @@ public struct Decimal64
     /// @param    right  Summand.
     ///
     /// @retval  ( this + A )
-    static func += (_ left: inout Decimal64, _ right: Decimal64 )
+    public static func += (_ left: inout Decimal64, _ right: Decimal64 )
     {
         let sign = left.sign
 
@@ -610,7 +592,7 @@ public struct Decimal64
     /// @param    right  Subtrahend
     ///
     /// @retval  Decimal64 ( this - A )
-    static func -=(_ left: inout Decimal64, _ right: Decimal64 )
+    public static func -=(_ left: inout Decimal64, _ right: Decimal64 )
     {
         let sign = left.sign
 
@@ -632,7 +614,7 @@ public struct Decimal64
     /// @param   right   Factor.
     ///
     /// @retval  Decimal64 ( this * B )
-    static func *=( _ left: inout Decimal64, _ right: Decimal64 )
+    public static func *=( _ left: inout Decimal64, _ right: Decimal64 )
     {
         var myExp = left.exponent
         let rightExp = right.exponent
@@ -703,7 +685,7 @@ public struct Decimal64
     /// - Parameters:
     ///   - left: number to be divided
     ///   - right: Divisor
-    static func /=( _ left: inout Decimal64, _ right: Decimal64 )
+    public static func /=( _ left: inout Decimal64, _ right: Decimal64 )
     {
         var myExp = left.exponent
         let rightExp = right.exponent
@@ -761,13 +743,13 @@ public struct Decimal64
         }
     }
 
-    static prefix func -( _ op: Decimal64 ) -> Decimal64 { var ret = op; ret.minus(); return ret }
+    public static prefix func -( _ op: Decimal64 ) -> Decimal64 { var ret = op; ret.minus(); return ret }
 
     /// If eventually a high-performance swift is available...
     /// a non-throwing swap may be necessary
     ///
     /// - Parameter other: swaps value with the other Decimal
-    mutating func swap(other: inout Decimal64) {
+    public mutating func swap(other: inout Decimal64) {
         let temp = other
         other = self
         self = temp
@@ -811,7 +793,7 @@ public struct Decimal64
         return 0
     }
 
-    static func !=( _ left: Decimal64, _ right: Decimal64 ) -> Bool {
+    public static func !=( _ left: Decimal64, _ right: Decimal64 ) -> Bool {
         return !( left  == right )
     }
 
@@ -827,13 +809,13 @@ public struct Decimal64
         return    right < left
     }
 
-    static func<<( _ left: Decimal64, _ right: Int ) -> Decimal64 {
+    public static func<<( _ left: Decimal64, _ right: Int ) -> Decimal64 {
         var ret = left
         ret <<= right
         return ret
     }
 
-    static func >>( _ left: Decimal64, _ right: Int ) -> Decimal64 {
+    public static func >>( _ left: Decimal64, _ right: Int ) -> Decimal64 {
         var ret = left
         ret >>= right
         return ret
