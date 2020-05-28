@@ -135,6 +135,56 @@ func testDecimal64( start: Decimal64 ) -> String  {
     return ret
 }
 
+extension BinaryInteger {
+    var binaryDescription: String {
+        var binaryString = ""
+        var internalNumber = self
+        var counter = 0
+
+        for _ in (1...self.bitWidth) {
+            binaryString.insert(contentsOf: "\(internalNumber & 1)", at: binaryString.startIndex)
+            internalNumber >>= 1
+            counter += 1
+            if counter % 4 == 0 {
+                binaryString.insert(contentsOf: " ", at: binaryString.startIndex)
+            }
+        }
+        return binaryString
+    }
+}
+
+
+extension Decimal64 {
+    var binaryDescription: String {
+        var binaryString = ""
+        var internalNumber = Int64(exponent)
+        var counter = 0
+
+        for _ in (1...Decimal64.EXP_SIZE) {
+            binaryString.insert(contentsOf: "\(internalNumber & 1)", at: binaryString.startIndex)
+            internalNumber >>= 1
+            counter += 1
+            if counter % 4 == 0 {
+                binaryString.insert(contentsOf: " ", at: binaryString.startIndex)
+            }
+        }
+        binaryString.insert(contentsOf: " e ", at: binaryString.startIndex)
+
+        internalNumber = mantissa
+        counter = 0
+
+        for _ in (1...Decimal64.MAN_SIZE) {
+            binaryString.insert(contentsOf: "\(internalNumber & 1)", at: binaryString.startIndex)
+            internalNumber >>= 1
+            counter += 1
+            if counter % 4 == 0 || counter == 54 {
+                binaryString.insert(contentsOf: " ", at: binaryString.startIndex)
+            }
+        }
+
+        return binaryString
+    }
+}
 print("Hello performance!")
 var s: String
 

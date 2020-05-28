@@ -31,6 +31,7 @@ public struct Decimal64
     static let MAN_SIZE = 55
     static let EXP_MASK = Int64(bitPattern: 0x1FF)  ///< bitmask for exponent
     static let SIG_MASK = Int64(bitPattern: 0x8000000000000000)
+    static let MAN_MASK = Int64(bitPattern: 0xFFFFFFFFFFFFFE00)
     static let EXP_MIN = -256
     static let EXP_MAX = 255
 
@@ -51,8 +52,7 @@ public struct Decimal64
         guard ( exp >= -256 ) && (exp <= 255 ) else {
             return nil
         }
-        let newExp = ( man < 0 ) ? -exp: exp
-        _data = ( man << Decimal64.EXP_SIZE ) | (InternalType(newExp) & Decimal64.EXP_MASK )
+        _data = ( man << Decimal64.EXP_SIZE ) | (InternalType(exp) & Decimal64.EXP_MASK )
     }
 
     public init?(_ value: Double) {
@@ -66,14 +66,13 @@ public struct Decimal64
 
     /// returns the mantissa with a simple bit shift. This will remove the exponent automatically
     var mantissa: Mantissa {
-        return _data >> Decimal64.EXP_SIZE
+        return (_data & Decimal64.MAN_MASK) >> Decimal64.EXP_SIZE
     }
 
     // the whole internal values is the 2's complement, to access the exponent we have to use the absolute value
     var exponent: Exponent {
-        let absolute = (_data < 0) ? -_data : _data
         // the left-shift right-shift sequence restores the sign of the exponent
-        return Exponent((( absolute & Decimal64.EXP_MASK ) << Decimal64.MAN_SIZE ) >> Decimal64.MAN_SIZE)
+        return Exponent((( _data & Decimal64.EXP_MASK ) << Decimal64.MAN_SIZE ) >> Decimal64.MAN_SIZE)
     }
 
     public var sign: Bool {
@@ -90,13 +89,13 @@ public struct Decimal64
     /// Mutating operations on the sign
     mutating func abs() {
         if _data < 0 {
-            _data = -_data
+            self.minus()
         }
     }
 
     mutating func minus() {
-        _data = -_data
-    }
+         _data = ( -mantissa << Decimal64.EXP_SIZE ) | (InternalType(exponent) & Decimal64.EXP_MASK )
+     }
 
     public static var greatestFiniteMagnitude: Decimal64 {
         return Decimal64(9_999_999_999_999_999, withExponent: EXP_MAX )!
@@ -224,11 +223,11 @@ public struct Decimal64
                 fatalError()
             }
 
+            if sig {
+                man = -man
+            }
             _data = man << Decimal64.EXP_SIZE
             _data |= Int64( -scale )
-            if sig {
-                _data = -_data
-            }
         }
     }
 
@@ -303,6 +302,10 @@ public struct Decimal64
                     exp += 3
                 }
             }
+            // change sign
+            if negative {
+                man = -man
+            }
 
             _data = man << Decimal64.EXP_SIZE
 
@@ -323,10 +326,6 @@ public struct Decimal64
             }
         }
 
-        // change sign
-        if negative {
-            _data = -_data
-        }
     }
 
     /// The functions break the number into integral and fractional parts.
@@ -643,11 +642,11 @@ public struct Decimal64
         else
         {
             // Calculate new coefficient
-            var myHigh = left.mantissa
+            var myHigh = left.sign ? -left.mantissa : left.mantissa
             let myLow  = myHigh % TenPow8
             myHigh /= TenPow8
 
-            var otherHigh = right.mantissa
+            var otherHigh = right.sign ? -right.mantissa : right.mantissa
             let otherLow  = otherHigh % TenPow8
             otherHigh /= TenPow8
 
@@ -708,8 +707,8 @@ public struct Decimal64
         var myExp = left.exponent
         let rightExp = right.exponent
 
-        var myMan = left.mantissa
-        let otherMan = right.mantissa
+        var myMan = left.sign ? -left.mantissa : left.mantissa
+        let otherMan = right.sign ? -right.mantissa : right.mantissa
 
         if ( otherMan == 0 ) {
             fatalError()
@@ -1067,7 +1066,7 @@ extension Decimal64: ExpressibleByStringLiteral
             c = iter.next()
         }
 
-        print(c ?? "END")
+        //print(c ?? "END")
 
         // Check sign
         let sig = ( c == "-" )
@@ -1157,7 +1156,7 @@ extension Decimal64: ExpressibleByStringLiteral
                 return nil
             }
         }
-        print (c ?? "END")
+       // print (c ?? "END")
         self.init(man, withExponent: exp)
     }
 }
@@ -1271,12 +1270,10 @@ extension Decimal64
 
     func toChar( _ buffer: UnsafeMutablePointer<UInt8> ) -> UnsafeMutablePointer<UInt8>
     {
-        var man = mantissa
+        let man = sign ? -mantissa: mantissa
 
         if man == 0 {
             return strcpy( buffer, "0" )
-        } else if man < 0 {
-            man = -man
         }
 
         var exp = exponent
