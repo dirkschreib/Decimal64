@@ -362,19 +362,34 @@ public struct Decimal64
     /// @retval  false  A is bigger or equal to B ( A >= B ).
     public static func <( _ left: Decimal64, _ right: Decimal64 ) -> Bool
     {
+        // special cases 1: internal representation is identical
         if  left._data == right._data {
             return false
         }
+
+        // special cases 2/3: one mantissa is zero
+        // (special case 4: both mantissa are zero with different exponents is handled automatically by the ordering of the following ifs)
+        if right.mantissa == 0 {
+            return left.sign
+        }
+        if left.mantissa == 0 {
+            return !right.sign
+        }
+
+        // normal case 1: different signs
+        if left.sign != right.sign {
+            return left.sign
+        }
+
+        // normal case 2: same sign. Here we have to normalize and check the exponent
         let l = left.normalized()
         let r = right.normalized()
 
         if l.exponent == r.exponent {
             return l.mantissa < r.mantissa
-        } else if l.exponent < r.exponent {
-            return !r.sign
-        } else {
-            return l.sign
         }
+
+        return (l.exponent < r.exponent) != l.sign
     }
 
     ///  Compute the sum of the absolute values of this and a second Decimal64.
