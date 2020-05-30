@@ -177,8 +177,7 @@ public struct Decimal64
 
         //TODO: should work with negative scale
         if expScale < 0 {
-            var man = mantissa
-            let sig = (_data < 0)
+            var man = sign ? -mantissa: mantissa
 
             var remainder: Int64 = 0
             var half: Int64 = 5
@@ -212,18 +211,18 @@ public struct Decimal64
                     man += 1
                 }
             case .down:
-                if sig && ( remainder != 0 ) {
+                if sign && ( remainder != 0 ) {
                     man += 1
                 }
             case .up:
-                if !sig && (remainder != 0 ) {
+                if !sign && (remainder != 0 ) {
                     man += 1
                 }
             @unknown default:
                 fatalError()
             }
 
-            if sig {
+            if sign {
                 man = -man
             }
             _data = man << Decimal64.EXP_SIZE
