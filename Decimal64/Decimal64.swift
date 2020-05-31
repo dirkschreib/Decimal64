@@ -46,22 +46,23 @@ public struct Decimal64
     }
 
     public init?(_ man: Mantissa, withExponent exp: Exponent) {
-        guard Swift.abs(man) < 10_000_000_000_000_000 else {
-            return nil
-        }
-        guard ( exp >= -256 ) && (exp <= 255 ) else {
-            return nil
-        }
+        guard Swift.abs(man) < 10_000_000_000_000_000 else { return nil }
+        guard ( exp >= -256 ) && (exp <= 255 ) else { return nil }
+        
         _data = ( man << Decimal64.EXP_SIZE ) | (InternalType(exp) & Decimal64.EXP_MASK )
     }
 
-    public init?(_ value: Double) {
-        let isNegative = ( value < 0 )
-        let value = Swift.abs(value)
-        let exp = Int( log10( value ) - 15 )
-        let man = Int64( value / pow( 10.0, Double(exp) ) + 0.5 )
+    public init?(_ value: Double, _ rule: FloatingPointRoundingRule = .toNearestOrAwayFromZero) {
+        guard value.isFinite else { return nil }
+        guard !value.isZero else { self.init(0, withExponent: 0); return }
 
-        self.init( isNegative ? -man: man, withExponent: exp )
+        /// always use all 16 available decimal digits and round the result using .toNearestOrAwayFromZero or given rule
+        let sign  = value < 0
+        let value = Swift.abs(value)
+        let exp   = Int( log10(value).rounded(.down) ) - 15
+        let man   = Int64( (value * pow( 10.0, Double(-exp) )).rounded(rule) )
+
+        self.init( sign ? -man: man, withExponent: exp )
     }
 
     /// returns the mantissa with a simple bit shift. This will remove the exponent automatically
@@ -69,7 +70,7 @@ public struct Decimal64
         return (_data & Decimal64.MAN_MASK) >> Decimal64.EXP_SIZE
     }
 
-    // the whole internal values is the 2's complement, to access the exponent we have to use the absolute value
+    /// the exponent is in 2's complement. To restore the sign all mantissa bits have to be set to the high bit of the exponent (sign extension)
     var exponent: Exponent {
         // the left-shift right-shift sequence restores the sign of the exponent
         return Exponent((( _data & Decimal64.EXP_MASK ) << Decimal64.MAN_SIZE ) >> Decimal64.MAN_SIZE)
