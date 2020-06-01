@@ -160,7 +160,7 @@ extension Decimal64 {
         var internalNumber = Int64(exponent)
         var counter = 0
 
-        for _ in (1...Decimal64.EXP_SIZE) {
+        for _ in (1...Decimal64.exponentBitCount) {
             binaryString.insert(contentsOf: "\(internalNumber & 1)", at: binaryString.startIndex)
             internalNumber >>= 1
             counter += 1
@@ -170,10 +170,10 @@ extension Decimal64 {
         }
         binaryString.insert(contentsOf: " e ", at: binaryString.startIndex)
 
-        internalNumber = mantissa
+        internalNumber = significand
         counter = 0
 
-        for _ in (1...Decimal64.MAN_SIZE) {
+        for _ in (1...Decimal64.significandBitCount) {
             binaryString.insert(contentsOf: "\(internalNumber & 1)", at: binaryString.startIndex)
             internalNumber >>= 1
             counter += 1
