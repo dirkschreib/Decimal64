@@ -185,6 +185,7 @@ extension Decimal64 {
         return binaryString
     }
 }
+
 print("Hello performance!")
 var s: String
 
