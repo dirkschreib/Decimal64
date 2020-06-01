@@ -2,7 +2,7 @@
 
 This is a small project which compares two different implementations for a Swift `Decimal64` struct against the builtin types Double and Decimal.
 
-## DecimalFP64
+## DecimalFP64 (deprecated)
 
 This is a struct which conforms to the `FloatingPoint` protocol. (It compiles fine but not all functions are implemented)
 It tries to follow IEEE 754 as closely as possible and supports +/- Infinity, signed zeros and NaNs.
