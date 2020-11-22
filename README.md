@@ -49,12 +49,12 @@ Testing was concluded with Xcode 10.2.1 on an iMac (Retina 5K, 27", 2017) with 4
 
 Number Type                  | Debug  | Release | rel.  | Debug v1.1 | Release v1.1 | rel. 
 -|-|-|-|-|-|-
-`Double`                            | 0.100s | 0.094s |  -5%  | 0.102s | 0.095s | -9%
 `Decimal`                          | 0.427s | 0.417s |  -2%   | 0.427s | 0.417s | -3%
-`DecimalFP64`                  | 0.784s | 0.101s | -87%  | 0.481s | 0.079s | -84%
 `Decimal64`                      |  0.543s | 0.102s | -81% | 0.521s | 0.078s | -85%
-`Double` (generic)             | 0.137s | 0.124s |  -8%   | 0.137s | 0.125s | -10%
+`DecimalFP64`                  | 0.784s | 0.101s | -87%  | 0.481s | 0.079s | -84%
 `DecimalFP64` (generic)   | 0.850s | 0.151s | -82%  | 0.529s | 0.110s | -79%
+`Double`                            | 0.100s | 0.094s |  -5%  | 0.102s | 0.095s | -9%
+`Double` (generic)             | 0.137s | 0.124s |  -8%   | 0.137s | 0.125s | -10%
 
 Key findings v1.0:
 - The debug performance didn't look very promising, but llvm can optimize this code very well.
@@ -69,3 +69,17 @@ Key findings v1.1:
 - I have never heard of `TextOutputStreamable` before. (Thanks Brent!) This is tremendous performance benefit.
 - `DecimalFP64` and `Decimal64` are now faster than `Double`. They need 18% less time to complete the benchmark test.
 - The performance difference to `Decimal` is even higher: The benchmark test is completed in 1/5th of the time.
+
+# Performance Update for Apple M1 Chip
+
+I've done some more testing with my new MacBook Air M1 (8GPU, 16GB, 512GB). All test with Big Sur (11.0.1) (exception MacBook Air with 1.6GHz i5 is on 11.1) and Xcode 12.2.
+
+Number Type                  | MBA x86 Deb | MBA x86 Rel | iMac x86 Deb | iMac x86 Rel | MBA M1 Deb | MBA M1 Rel 
+-|-|-|-|-|-|-
+`Decimal`                    |  7.308s |  6.635s |  5.535s | 4.795s |  4.121s | 3.737s
+`Decimal64`                  | 34.237s |  1.578s | 25.237s | 1.212s | 16.965s | 0.890s
+`DecimalFP64`                | 23.192s |  1.594s | 15.753s | 1.217s | 10.476s | 0.911s
+`DecimalFP64` (generic)      | 23.139s |  2.261s | 16.467s | 1.713s | 11.005s | 1.226s
+`Double`                     |  2.567s |  1.640s |  1.697s | 1.193s |  1.227s | 0.885s
+`Double` (generic)           |  3.521s |  2.256s |  2.273s | 1.684s |  1.589s | 1.203s
+
