@@ -66,7 +66,7 @@ Key findings v1.0:
 - The own implementation is just 5% slower than the builtin `Double` (which is unsuitable for most currency calculations)
 
 Key findings v1.1:
-- I have never heard of `TextOutputStreamable` before. (Thanks Brent!) This is tremendous performance benefit.
+- I have never heard of `TextOutputStreamable` before. (Thanks Brent!) This is a tremendous performance benefit.
 - `DecimalFP64` and `Decimal64` are now faster than `Double`. They need 18% less time to complete the benchmark test.
 - The performance difference to `Decimal` is even higher: The benchmark test is completed in 1/5th of the time.
 
