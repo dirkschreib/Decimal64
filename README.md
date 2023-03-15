@@ -79,7 +79,7 @@ Update: Some more tests with a Mac Studio M1 Max running Ventura 13.2.1 with Xco
 All time in seconds for 100 tests.
 
 Number Type                  | MBA x86 Deb | MBA x86 Rel | iMac x86 Deb | iMac x86 Rel | MBA M1 Deb | MBA M1 Rel | Studio Max Deb | Studio Max Rel
--|-|-|-|-|-|-
+-|-|-|-|-|-|-|-|-
 `Decimal`                    |  7.308 |  6.635 |  5.535 | 4.795 |  4.121 | 3.737 | 3.237 | 2.847
 `Decimal64`                  | 34.237 |  1.578 | 25.237 | 1.212 | 16.965 | 0.890 | 4.752 | 0.509
 `DecimalFP64`                | 23.192 |  1.594 | 15.753 | 1.217 | 10.476 | 0.911 | 3.404 | 0.512
