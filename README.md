@@ -74,12 +74,16 @@ Key findings v1.1:
 
 I've done some more testing with my new MacBook Air M1 (8GPU, 16GB, 512GB). All test with Big Sur (11.0.1) (exception MacBook Air with 1.6GHz i5 is on 11.1) and Xcode 12.2.
 
-Number Type                  | MBA x86 Deb | MBA x86 Rel | iMac x86 Deb | iMac x86 Rel | MBA M1 Deb | MBA M1 Rel 
+Update: Some more tests with a Mac Studio M1 Max running Ventura 13.2.1 with Xcode 14.2 
+
+All time in seconds for 100 tests.
+
+Number Type                  | MBA x86 Deb | MBA x86 Rel | iMac x86 Deb | iMac x86 Rel | MBA M1 Deb | MBA M1 Rel | Studio Max Deb | Studio Max Rel
 -|-|-|-|-|-|-
-`Decimal`                    |  7.308s |  6.635s |  5.535s | 4.795s |  4.121s | 3.737s
-`Decimal64`                  | 34.237s |  1.578s | 25.237s | 1.212s | 16.965s | 0.890s
-`DecimalFP64`                | 23.192s |  1.594s | 15.753s | 1.217s | 10.476s | 0.911s
-`DecimalFP64` (generic)      | 23.139s |  2.261s | 16.467s | 1.713s | 11.005s | 1.226s
-`Double`                     |  2.567s |  1.640s |  1.697s | 1.193s |  1.227s | 0.885s
-`Double` (generic)           |  3.521s |  2.256s |  2.273s | 1.684s |  1.589s | 1.203s
+`Decimal`                    |  7.308 |  6.635 |  5.535 | 4.795 |  4.121 | 3.737 | 3.237 | 2.847
+`Decimal64`                  | 34.237 |  1.578 | 25.237 | 1.212 | 16.965 | 0.890 | 4.752 | 0.509
+`DecimalFP64`                | 23.192 |  1.594 | 15.753 | 1.217 | 10.476 | 0.911 | 3.404 | 0.512
+`DecimalFP64` (generic)      | 23.139 |  2.261 | 16.467 | 1.713 | 11.005 | 1.226 | 3.823 | 0.790
+`Double`                     |  2.567 |  1.640 |  1.697 | 1.193 |  1.227 | 0.885 | 0.614 | 0.365
+`Double` (generic)           |  3.521 |  2.256 |  2.273 | 1.684 |  1.589 | 1.203 | 0.997 | 0.700
 
