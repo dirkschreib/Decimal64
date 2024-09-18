@@ -728,12 +728,10 @@ public struct Decimal64
             var shift = int64_shiftLeftTo18( &myMan )
             mainShift += shift
 
-            while ( remainderA > 0 )
-            {
+            while ( remainderA > 0 ) {
                 shift -= int64_shiftLeftTo18( &remainderA )
-                if ( shift < -17 )
-                {
-                    break;
+                if ( shift < -17 ) {
+                    break
                 }
 
                 // Do division.
@@ -742,13 +740,11 @@ public struct Decimal64
 
                 shiftDigits( &remainderA, shift )
 
-                if ( remainderA == 0 )
-                {
+                if ( remainderA == 0 ) {
                     break
                 }
 
                 myMan += remainderA
-
                 remainderA = remainderB
             }
 
@@ -779,8 +775,7 @@ public struct Decimal64
     {
         var exp = exponent
 
-        if ( exp >= -16 )
-        {
+        if ( exp >= -16 ) {
             var man = significand
             var shift = 0
 
