@@ -185,40 +185,46 @@ extension Decimal64 {
         return binaryString
     }
 }
-print("Hello performance!")
 var s: String
 
 var date = Date()
 for i in 1...100 {
     s = testDouble(start: Double(Double(i)/10))
 }
-print("Double  time: ", date.timeIntervalSinceNow)
+var dur = -date.timeIntervalSinceNow
+let base = dur
+print("Double  time: ", dur, dur/base*100)
 /*
 date = Date()
 for i in 1...100 {
     s = testDecimal(start: Decimal(Double(i)/10))
 }
-print("Decimal time: ", date.timeIntervalSinceNow)
+dur = -date.timeIntervalSinceNow
+print("Decimal time: ", dur, dur/base*100)
 */
 date = Date()
 for i in 1...100 {
     s = testDecimalFP64(start: DecimalFP64(Double(i)/10))
 }
-print("DecFP64 time: ", date.timeIntervalSinceNow)
+dur = -date.timeIntervalSinceNow
+print("DecFP64 time: ", dur, dur/base*100)
 date = Date()
 for i in 1...100 {
     s = testDecimal64(start: Decimal64(Double(i)/10)!)
 }
-print("Dec64   time: ", date.timeIntervalSinceNow)
+dur = -date.timeIntervalSinceNow
+print("Dec64   time: ", dur, dur/base*100)
 
 date = Date()
 for i in 1...100 {
     s = templTest(start: Double(Double(i)/10))
 }
-print("TDouble time: ", date.timeIntervalSinceNow)
+dur = -date.timeIntervalSinceNow
+print("TDouble time: ", dur, dur/base*100)
 date = Date()
 for i in 1...100 {
     s = templTest(start: DecimalFP64(Double(i)/10))
 }
-print("TDec64FPtime: ", date.timeIntervalSinceNow)
+dur = -date.timeIntervalSinceNow
+print("TDec64FPtime: ", dur, dur/base*100)
 
