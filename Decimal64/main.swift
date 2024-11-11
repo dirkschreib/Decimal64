@@ -193,11 +193,13 @@ for i in 1...100 {
     s = testDouble(start: Double(Double(i)/10))
 }
 print("Double  time: ", date.timeIntervalSinceNow)
+/*
 date = Date()
 for i in 1...100 {
     s = testDecimal(start: Decimal(Double(i)/10))
 }
 print("Decimal time: ", date.timeIntervalSinceNow)
+*/
 date = Date()
 for i in 1...100 {
     s = testDecimalFP64(start: DecimalFP64(Double(i)/10))
