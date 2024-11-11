@@ -905,111 +905,115 @@ extension Decimal64: TextOutputStreamable
         }
 
         var exp = exponent
-        var end = UnsafeMutablePointer<UInt8>( &data.30 )
-        var start = ll2str( man, end )
+        withUnsafeMutableBytes(of: &data) { bytes in
+            var end = bytes.count - 10
+            var start = ll2str( man, bytes, end )
 
-        if ( exp < 0 ) {
-            end -= 1
-
-            // Try to set a decimal point to make exp equal to zero.
-            // Strip off trailing zeroes.
-            while ( end.pointee == 0x30 ) && ( exp < 0 ) {
+            if ( exp < 0 ) {
                 end -= 1
-                exp += 1
-            }
 
-            if exp < 0 {
-                if exp > start - end - 6 {
-                    // Add maximal 6 additional chars left from digits to get
-                    // 0.nnn, 0.0nnn, 0.00nnn, 0.000nnn, 0.0000nnn or 0.00000nnn.
-                    // The result may have more than 16 digits.
-                    while start - end > exp {
-                        start -= 1
-                        start.pointee = 0x30 // 0
-                    }
+                // Try to set a decimal point to make exp equal to zero.
+                // Strip off trailing zeroes.
+                while ( bytes[end] == 0x30 ) && ( exp < 0 ) {
+                    end -= 1
+                    exp += 1
                 }
 
-                let dotPos = ( end - start ) + exp + 1;
-                // exp < 0 therefore start + dotPos <= end.
-                if dotPos > 0 {
-                    memmove( start + dotPos + 1, start + dotPos, 1 - exp )
-                    start[ dotPos ] = 0x2E // .
-                    exp = 0
-                    end += 2
+                if exp < 0 {
+                    if exp > start - end - 6 {
+                        // Add maximal 6 additional chars left from digits to get
+                        // 0.nnn, 0.0nnn, 0.00nnn, 0.000nnn, 0.0000nnn or 0.00000nnn.
+                        // The result may have more than 16 digits.
+                        while start - end > exp {
+                            start -= 1
+                            bytes[start] = 0x30 // 0
+                        }
+                    }
+
+                    let dotPos = ( end - start ) + exp + 1;
+                    // exp < 0 therefore start + dotPos <= end.
+                    if dotPos > 0 {
+                        memmove( bytes.baseAddress! + start + dotPos + 1, bytes.baseAddress! + start + dotPos, 1 - exp )
+                        bytes[ start + dotPos ] = 0x2E // .
+                        exp = 0
+                        end += 2
+                    }
+                    else {
+                        if end != start {
+                            let startMinusOne = start - 1
+                            bytes[startMinusOne] = bytes[start]
+                            bytes[start] = 0x2E // .
+                            start -= 1
+                        }
+
+                        exp = 1 - dotPos
+
+                        end += 1
+                        bytes[end] = 0x45 // E
+                        end += 1
+                        bytes[end] = 0x2D // -
+
+                        end += 2
+                        if exp >= 10 {
+                            end += 1
+                        }
+                        if exp >= 100 {
+                            end += 1
+                        }
+                        _ = ll2str( Int64(exp), bytes, end )
+                    }
                 }
                 else {
-                    if end != start {
-                        let startMinusOne = start.advanced(by: -1)
-                        startMinusOne.pointee = start.pointee
-                        start.pointee = 0x2E // .
-                        start -= 1
-                    }
-
-                    exp = 1 - dotPos
-
                     end += 1
-                    end.pointee = 0x45 // E
-                    end += 1
-                    end.pointee = 0x2D // -
-
-                    end += 2
-                    if exp >= 10 {
-                        end += 1
-                    }
-                    if exp >= 100 {
-                        end += 1
-                    }
-                    _ = ll2str( Int64(exp), end )
                 }
             }
-            else {
-                end += 1
-            }
-        }
-        else if exp + end - start > 16 {
-            end -= 1
-
-            exp += end - start //TODO: will it work on 64bit?
-
-            while  end.pointee == 0x30 { // 0
+            else if exp + end - start > 16 {
                 end -= 1
+
+                exp += end - start //TODO: will it work on 64bit?
+
+                while bytes[end] == 0x30 { // 0
+                    end -= 1
+                }
+
+                if end != start {
+                    let oldstart = start
+                    start -= 1
+                    bytes[start] = bytes[oldstart]
+                    // print(oldstart) // code will work with this print statement and in debug mode but unfortunately not in release mode
+                    bytes[oldstart] = 0x2E // .
+                }
+                end += 1
+                bytes[end] = 0x45 // E
+                end += 1
+                bytes[end] = 0x2B // +
+
+                end += 2
+                if exp >= 10 {
+                    end += 1
+                }
+                if exp >= 100 {
+                    end += 1
+                }
+                _ = ll2str( Int64(exp), bytes, end )
+            }
+            else {
+                while exp > 0 {
+                    bytes[end] = 0x30 // 0
+                    end += 1
+                    exp -= 1
+                }
             }
 
-            if end != start {
-                let startMinusOne = start.advanced(by: -1)
-                startMinusOne.pointee = start.pointee
-                start.pointee = 0x2E // .
+            if sign {
                 start -= 1
+                bytes[start] = 0x2D // -
             }
-            end += 1
-            end.pointee = 0x45 // E
-            end += 1
-            end.pointee = 0x2B // +
 
-            end += 2
-            if exp >= 10 {
-                end += 1
-            }
-            if exp >= 100 {
-                end += 1
-            }
-            _ = ll2str( Int64(exp), end )
+            bytes[end] = 0 // may be out of bounds
+            let out = UnsafeBufferPointer<UInt8>(start: (bytes.baseAddress! + start).assumingMemoryBound(to: UInt8.self), count: end - start)
+            target._writeASCII(out)
         }
-        else {
-            while exp > 0 {
-                end.pointee = 0x30 // 0
-                end += 1
-                exp -= 1
-            }
-        }
-
-        if sign {
-            start -= 1
-            start.pointee = 0x2D // -
-        }
-
-        end.pointee = 0
-        target._writeASCII(UnsafeBufferPointer<UInt8>(start: start, count: end - start))
     }
 }
 
@@ -1249,6 +1253,35 @@ extension Decimal64
         memcpy(end, Decimal64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
 
         return UnsafeMutablePointer<UInt8>.init(OpaquePointer( end))
+    }
+
+    private func ll2str(_ x: Int64, _ bytes: UnsafeMutableRawBufferPointer, _ end: Int ) -> Int
+    {
+        var x = x
+        var end = end
+
+        while x >= 10000 {
+            let y = Int(x % 10000)
+            x /= 10000
+            end -= 4
+            memcpy(bytes.baseAddress! + end, Decimal64.int64LookUp.Pointer + y * 4, 4)
+        }
+
+        var dig = 1
+        if x >= 100 {
+            if x >= 1000 {
+                dig = 4
+            } else {
+                dig = 3
+            }
+        } else if x >= 10 {
+            dig = 2
+        }
+        end -= dig
+
+        memcpy(bytes.baseAddress! + end, Decimal64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
+
+        return end
     }
 
     // possibly not the fastest swift way. but for now the easiest way to port some c++ code
