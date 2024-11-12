@@ -1344,7 +1344,7 @@ struct DecimalFP64: FloatingPoint
             var half: Int64 = 5
             if method != .towardZero {
                 if expScale >= -16  {
-                    remainder = man % PowerOf10[ -( expScale ) ];
+                    remainder = man % PowerOf10[ -( expScale ) ]
                 }
                 else if man != 0 {
                     remainder = 1
@@ -1355,7 +1355,7 @@ struct DecimalFP64: FloatingPoint
             }
 
             // first round down
-            shiftDigits( &man, expScale );
+            shiftDigits( &man, expScale )
 
             switch method {
             case .toNearestOrAwayFromZero:
@@ -1919,26 +1919,26 @@ struct DecimalFP64: FloatingPoint
 
             if ( ( leftExp == rightExp ) || ( leftMan == 0 ) || ( rightMan == 0 ) )
             {
-                ret = ( leftMan == rightMan );
+                ret = ( leftMan == rightMan )
             }
             else if ( ( leftExp > rightExp - 18 ) && ( leftExp < rightExp ) )
             {
                 // Try to make rightExp smaller to make it equal to leftExp.
-                rightExp -= int64_shiftLeftTo17orLim( &rightMan, rightExp - leftExp );
+                rightExp -= int64_shiftLeftTo17orLim( &rightMan, rightExp - leftExp )
 
                 if ( leftExp == rightExp )
                 {
-                    ret = ( leftMan == rightMan );
+                    ret = ( leftMan == rightMan )
                 }
             }
             else if ( ( leftExp < rightExp + 18 ) && ( leftExp > rightExp ) )
             {
                 // Try to make leftExp smaller to make it equal to rightExp.
-                leftExp -= int64_shiftLeftTo17orLim( &leftMan, leftExp - rightExp );
+                leftExp -= int64_shiftLeftTo17orLim( &leftMan, leftExp - rightExp )
 
                 if ( leftExp == rightExp )
                 {
-                    ret = ( leftMan == rightMan );
+                    ret = ( leftMan == rightMan )
                 }
             }
             else
@@ -1950,10 +1950,10 @@ struct DecimalFP64: FloatingPoint
         else
         {
             // A >= 0 and B <= 0 or A <= 0 and B >= 0.
-            ret = ( leftMan == 0 ) && ( rightMan == 0 );
+            ret = ( leftMan == 0 ) && ( rightMan == 0 )
         }
 
-        return ret;
+        return ret
     }
 
     ///  Compare two DecimalFP64.
@@ -1989,7 +1989,7 @@ struct DecimalFP64: FloatingPoint
             // Lets assume both are positive.
             if ( ( leftExp == rightExp ) || ( leftMan == 0 ) || ( rightMan == 0 ) )
             {
-                ret = ( leftMan < rightMan );
+                ret = ( leftMan < rightMan )
             }
             else if ( rightExp >= leftExp + 18 )
             {
@@ -2002,22 +2002,22 @@ struct DecimalFP64: FloatingPoint
                 if ( leftExp < rightExp )
                 {
                     // Try to make rightExp smaller to make it equal to leftExp.
-                    rightExp -= int64_shiftLeftTo17orLim( &rightMan, rightExp - leftExp );
+                    rightExp -= int64_shiftLeftTo17orLim( &rightMan, rightExp - leftExp )
 
                     // If rightExp is greater than leftExp then rightMan > TenPow16 > leftMan.
-                    ret = true;
+                    ret = true
                 }
                 else
                 {
                     // Try to make leftExp smaller to make it equal to rightExp.
-                    leftExp -= int64_shiftLeftTo17orLim( &leftMan, leftExp - rightExp );
+                    leftExp -= int64_shiftLeftTo17orLim( &leftMan, leftExp - rightExp )
 
                     // If leftExp is greater than rightExp then leftMan > TenPow16 > rightMan.
                 }
 
                 if ( leftExp == rightExp )
                 {
-                    ret = ( leftMan < rightMan );
+                    ret = ( leftMan < rightMan )
                 }
             }
             else
@@ -2028,16 +2028,16 @@ struct DecimalFP64: FloatingPoint
             // If both are negative and not equal then ret = ! ret.
             if leftSign {
                 if ret {
-                    ret = false;
+                    ret = false
                 }
                 else
                 {
-                    ret = ( leftExp != rightExp ) || ( leftMan != rightMan );
+                    ret = ( leftExp != rightExp ) || ( leftMan != rightMan )
                 }
             }
         }
 
-        return ret;
+        return ret
     }
 
     ///  Compute the sum of the absolute values of this and a second DecimalFP64.
@@ -2127,8 +2127,8 @@ struct DecimalFP64: FloatingPoint
     ///   - negative: flag if ... is negative
     mutating func subtractFromThis( _ right: DecimalFP64, _ negative: Bool )
     {
-        var myExp = getExponent();
-        var otherExp = right.getExponent();
+        var myExp = getExponent()
+        var otherExp = right.getExponent()
 
         if ( myExp > 253 || otherExp > 253 ) // equivalent to ( !isNumber() || !right.isNumber() ) but faster
         {
@@ -2138,15 +2138,15 @@ struct DecimalFP64: FloatingPoint
             }
             else if ( ( myExp <= 253 ) && ( otherExp == 254 ) )
             {
-                setInfinity();
+                setInfinity()
 
                 if negative {
-                    minus();
+                    minus()
                 }
             }
             else
             {
-                setNaN();
+                setNaN()
             }
         }
         else
@@ -2161,7 +2161,7 @@ struct DecimalFP64: FloatingPoint
             }
             else if ( myExp == otherExp )
             {
-                setComponents( myMan - otherMan, myExp, negative );
+                setComponents( myMan - otherMan, myExp, negative )
             }
             else if ( ( myExp < otherExp - 32 ) || ( myMan == 0 ) )
             {
@@ -2175,7 +2175,7 @@ struct DecimalFP64: FloatingPoint
                 if ( myExp < otherExp )
                 {
                     // Make otherExp smaller.
-                    otherExp -= int64_shiftLeftTo17orLim( &otherMan, min( 17, otherExp - myExp ) );
+                    otherExp -= int64_shiftLeftTo17orLim( &otherMan, min( 17, otherExp - myExp ) )
                     if ( myExp != otherExp )
                     {
                         if ( otherExp > myExp + 16 )
@@ -2187,29 +2187,29 @@ struct DecimalFP64: FloatingPoint
                         }
 
                         // myExp is still smaller than otherExp, make it bigger.
-                        myMan /= PowerOf10[ otherExp - myExp ];
-                        myExp = otherExp;
+                        myMan /= PowerOf10[ otherExp - myExp ]
+                        myExp = otherExp
                     }
                 }
                 else
                 {
                     // Make myExp smaller.
-                    myExp -= int64_shiftLeftTo17orLim( &myMan, min( 17, myExp - otherExp ) );
+                    myExp -= int64_shiftLeftTo17orLim( &myMan, min( 17, myExp - otherExp ) )
                     if ( myExp != otherExp )
                     {
                         if ( myExp > otherExp + 16 )
                         {
                             // Nothing to do because NumB is too small
-                            return;
+                            return
                         }
 
                         // otherExp is still smaller than myExp, make it bigger.
-                        otherMan /= PowerOf10[ myExp - otherExp ];
+                        otherMan /= PowerOf10[ myExp - otherExp ]
                     }
                 }
 
                 // Now both exponents are equal.
-                setComponents( myMan - otherMan, myExp, negative );
+                setComponents( myMan - otherMan, myExp, negative )
             }
             else
             {
@@ -2306,7 +2306,7 @@ struct DecimalFP64: FloatingPoint
             left.subtractFromThis( right, sign )
         }
         else {
-            left.addToThis( right, sign );
+            left.addToThis( right, sign )
         }
     }
 
@@ -2334,13 +2334,13 @@ struct DecimalFP64: FloatingPoint
                 left.setInfinity()
 
                 if ( flipSign ) {
-                    left.minus();
+                    left.minus()
                 }
             }
                 // NaN is set if both exp are greater than 254
             else
             {
-                left.setNaN();
+                left.setNaN()
             }
         }
         else if ( right.Data == 0 || left.Data == 0 ) {
@@ -2390,7 +2390,7 @@ struct DecimalFP64: FloatingPoint
             }
 
             // Calculate new exponent.
-            myExp += rightExp + shift;
+            myExp += rightExp + shift
 
             left.setComponents( myMan, myExp, left.getSign() != right.getSign() )
         }
@@ -2421,11 +2421,11 @@ struct DecimalFP64: FloatingPoint
         {
             if ( ( myExp == 254 ) && ( rightExp <= 254 ) )
             {
-                let flipSign = (left.getSign() != right.getSign());
+                let flipSign = (left.getSign() != right.getSign())
                 left.setInfinity()
 
                 if ( flipSign ){
-                    left.minus();
+                    left.minus()
                 }
             }
             else if ( ( myExp <= 253 ) && ( rightExp == 254 ) )
@@ -2434,12 +2434,12 @@ struct DecimalFP64: FloatingPoint
             }
             else
             {
-                left.setNaN();
+                left.setNaN()
             }
         }
         else if ( otherMan == 0 )
         {
-            let sign = left.getSign();
+            let sign = left.getSign()
             left.setInfinity()
 
             if sign {
@@ -2467,7 +2467,7 @@ struct DecimalFP64: FloatingPoint
                 shift -= int64_shiftLeftTo18( &remainderA )
                 if ( shift < -17 )
                 {
-                    break;
+                    break
                 }
 
                 // Do division.
@@ -2693,10 +2693,10 @@ extension DecimalFP64: TextOutputStreamable
 {
     func write<Target>(to target: inout Target) where Target : TextOutputStream {
         var data: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
-            ) = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+                   UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+                   UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8,
+                   UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8
+        ) = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 
         guard !isNaN else {
             target.write("NaN")
@@ -2719,112 +2719,114 @@ extension DecimalFP64: TextOutputStreamable
             return
         }
 
-        var exp = getExponent();
-        var end = UnsafeMutablePointer<UInt8>( &data.30 )
-        var start = ll2str( man, end )
+        var exp = getExponent()
+        withUnsafeMutablePointer(to: &data.30) { end in
+            var end = end
+            var start = ll2str( man, end )
 
-        if ( exp < 0 ) {
-            end -= 1
-
-            // Try to set a decimal point to make exp equal to zero.
-            // Strip off trailing zeroes.
-            while ( end.pointee == 0x30 ) && ( exp < 0 ) {
+            if ( exp < 0 ) {
                 end -= 1
-                exp += 1
-            }
 
-            if exp < 0 {
-                if exp > start - end - 6 {
-                    // Add maximal 6 additional chars left from digits to get
-                    // 0.nnn, 0.0nnn, 0.00nnn, 0.000nnn, 0.0000nnn or 0.00000nnn.
-                    // The result may have more than 16 digits.
-                    while start - end > exp {
-                        start -= 1
-                        start.pointee = 0x30 // 0
-                    }
+                // Try to set a decimal point to make exp equal to zero.
+                // Strip off trailing zeroes.
+                while ( end.pointee == 0x30 ) && ( exp < 0 ) {
+                    end -= 1
+                    exp += 1
                 }
 
-                let dotPos = ( end - start ) + exp + 1;
-                // exp < 0 therefore start + dotPos <= end.
-                if dotPos > 0 {
-                    memmove( start + dotPos + 1, start + dotPos, 1 - exp )
-                    start[ dotPos ] = 0x2E // .
-                    exp = 0
-                    end += 2
+                if exp < 0 {
+                    if exp > start - end - 6 {
+                        // Add maximal 6 additional chars left from digits to get
+                        // 0.nnn, 0.0nnn, 0.00nnn, 0.000nnn, 0.0000nnn or 0.00000nnn.
+                        // The result may have more than 16 digits.
+                        while start - end > exp {
+                            start -= 1
+                            start.pointee = 0x30 // 0
+                        }
+                    }
+
+                    let dotPos = ( end - start ) + exp + 1
+                    // exp < 0 therefore start + dotPos <= end.
+                    if dotPos > 0 {
+                        memmove( start + dotPos + 1, start + dotPos, 1 - exp )
+                        start[ dotPos ] = 0x2E // .
+                        exp = 0
+                        end += 2
+                    }
+                    else {
+                        if end != start {
+                            let fb = start.pointee
+                            start.pointee = 0x2E // .
+                            start -= 1
+                            start.pointee = fb
+                        }
+
+                        exp = 1 - dotPos
+
+                        end += 1
+                        end.pointee = 0x45 // E
+                        end += 1
+                        end.pointee = 0x2D // -
+
+                        end += 2
+                        if exp >= 10 {
+                            end += 1
+                        }
+                        if exp >= 100 {
+                            end += 1
+                        }
+                        _ = ll2str( Int64(exp), end )
+                    }
                 }
                 else {
-                    if end != start {
-                        let startMinusOne = start.advanced(by: -1)
-                        startMinusOne.pointee = start.pointee
-                        start.pointee = 0x2E // .
-                        start -= 1
-                    }
-
-                    exp = 1 - dotPos
-
                     end += 1
-                    end.pointee = 0x45 // E
-                    end += 1
-                    end.pointee = 0x2D // -
-
-                    end += 2
-                    if exp >= 10 {
-                        end += 1
-                    }
-                    if exp >= 100 {
-                        end += 1
-                    }
-                    _ = ll2str( Int64(exp), end )
                 }
             }
-            else {
-                end += 1
-            }
-        }
-        else if exp + end - start > 16 {
-            end -= 1
-
-            exp += end - start //TODO: will it work on 64bit?
-
-            while  end.pointee == 0x30 { // 0
+            else if exp + end - start > 16 {
                 end -= 1
+
+                exp += end - start //TODO: will it work on 64bit?
+
+                while  end.pointee == 0x30 { // 0
+                    end -= 1
+                }
+
+                if end != start {
+                    let fb = start.pointee
+                    start.pointee = 0x2E // .
+                    start -= 1
+                    start.pointee = fb
+                }
+                end += 1
+                end.pointee = 0x45 // E
+                end += 1
+                end.pointee = 0x2B // +
+
+                end += 2
+                if exp >= 10 {
+                    end += 1
+                }
+                if exp >= 100 {
+                    end += 1
+                }
+                _ = ll2str( Int64(exp), end )
+            }
+            else {
+                while exp > 0 {
+                    end.pointee = 0x30 // 0
+                    end += 1
+                    exp -= 1
+                }
             }
 
-            if end != start {
-                let startMinusOne = start.advanced(by: -1)
-                startMinusOne.pointee = start.pointee
-                start.pointee = 0x2E // .
+            if getSign() {
                 start -= 1
+                start.pointee = 0x2D // -
             }
-            end += 1
-            end.pointee = 0x45 // E
-            end += 1
-            end.pointee = 0x2B // +
 
-            end += 2
-            if exp >= 10 {
-                end += 1
-            }
-            if exp >= 100 {
-                end += 1
-            }
-            _ = ll2str( Int64(exp), end )
+            end.pointee = 0
+            target._writeASCII(UnsafeBufferPointer<UInt8>(start: start, count: end - start))
         }
-        else {
-            while exp > 0 {
-                end.pointee = 0x30 // 0
-                end += 1
-                exp -= 1
-            }
-        }
-
-        if getSign() {
-            start -= 1
-            start.pointee = 0x2D // -
-        }
-
-        end.pointee = 0
-        target._writeASCII(UnsafeBufferPointer<UInt8>(start: start, count: end - start))
     }
 }
 
@@ -2842,7 +2844,7 @@ extension DecimalFP64
     ///   - x: The number.
     ///   - end: Pointer to the end of the buffer.
     /// - Returns: Pointer to beginning of the string.
-    private func ll2str(_ x: Int64, _ end: UnsafeMutableRawPointer ) -> UnsafeMutablePointer<UInt8>
+    private func ll2str(_ x: Int64, _ end: UnsafeMutablePointer<UInt8> ) -> UnsafeMutablePointer<UInt8>
     {
         var x = x
         var end = end
@@ -2851,7 +2853,7 @@ extension DecimalFP64
             let y = Int(x % 10000)
             x /= 10000
             end -= 4
-            memcpy(end, Decimal64.int64LookUp.Pointer + y * 4, 4)
+            memcpy(end, DecimalFP64.int64LookUp.Pointer + y * 4, 4)
         }
 
         var dig = 1
@@ -2866,9 +2868,9 @@ extension DecimalFP64
         }
         end -= dig
 
-        memcpy(end, Decimal64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
+        memcpy(end, DecimalFP64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
 
-        return UnsafeMutablePointer<UInt8>.init(OpaquePointer(end))
+        return end
     }
 
     // possibly not the fastest swift way. but for now the easiest way to port some c++ code
@@ -2904,7 +2906,7 @@ extension DecimalFP64
             return strcpy( buffer, "0" )
         }
 
-        var exp = getExponent();
+        var exp = getExponent()
         var end = buffer.advanced(by: 30)
         var start = ll2str( man, end )
 
@@ -2929,7 +2931,7 @@ extension DecimalFP64
                     }
                 }
 
-                let dotPos = ( end - start ) + exp + 1;
+                let dotPos = ( end - start ) + exp + 1
                 // exp < 0 therefore start + dotPos <= end.
                 if dotPos > 0 {
                     memmove( start + dotPos + 1, start + dotPos, 1 - exp )
@@ -2939,10 +2941,10 @@ extension DecimalFP64
                 }
                 else {
                     if end != start {
-                        let startMinusOne = start.advanced(by: -1)
-                        startMinusOne.pointee = start.pointee
+                        let fb = start.pointee
                         start.pointee = 0x2E // .
                         start -= 1
+                        start.pointee = fb
                     }
 
                     exp = 1 - dotPos
@@ -2976,10 +2978,10 @@ extension DecimalFP64
             }
 
             if end != start {
-                let startMinusOne = start.advanced(by: -1)
-                startMinusOne.pointee = start.pointee
+                let fb = start.pointee
                 start.pointee = 0x2E // .
                 start -= 1
+                start.pointee = fb
             }
             end += 1
             end.pointee = 0x45 // E
@@ -3018,7 +3020,7 @@ extension DecimalFP64
         var Pointer: UnsafeMutablePointer<UInt8>
 
         init() {
-            Pointer = UnsafeMutablePointer<UInt8>.allocate( capacity: 40000 )
+            Pointer = UnsafeMutablePointer<UInt8>.allocate(capacity: 40000)
             var fill = Pointer
             for i in 0...9999 {
                 var val = i
@@ -3046,7 +3048,4 @@ extension DecimalFP64
     }
 
     static let int64LookUp = LookUpTable()
-
 }
-
-

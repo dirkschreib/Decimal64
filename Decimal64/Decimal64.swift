@@ -905,16 +905,17 @@ extension Decimal64: TextOutputStreamable
         }
 
         var exp = exponent
-        withUnsafeMutableBytes(of: &data) { bytes in
-            var end = bytes.count - 10
-            var start = ll2str( man, bytes, end )
+
+        withUnsafeMutablePointer(to: &data.30) { end in
+            var end = end
+            var start = ll2str( man, end )
 
             if ( exp < 0 ) {
                 end -= 1
 
                 // Try to set a decimal point to make exp equal to zero.
                 // Strip off trailing zeroes.
-                while ( bytes[end] == 0x30 ) && ( exp < 0 ) {
+                while ( end.pointee == 0x30 ) && ( exp < 0 ) {
                     end -= 1
                     exp += 1
                 }
@@ -926,32 +927,32 @@ extension Decimal64: TextOutputStreamable
                         // The result may have more than 16 digits.
                         while start - end > exp {
                             start -= 1
-                            bytes[start] = 0x30 // 0
+                            start.pointee = 0x30 // 0
                         }
                     }
 
                     let dotPos = ( end - start ) + exp + 1;
                     // exp < 0 therefore start + dotPos <= end.
                     if dotPos > 0 {
-                        memmove( bytes.baseAddress! + start + dotPos + 1, bytes.baseAddress! + start + dotPos, 1 - exp )
-                        bytes[ start + dotPos ] = 0x2E // .
+                        memmove( start + dotPos + 1, start + dotPos, 1 - exp )
+                        (start + dotPos).pointee = 0x2E // .
                         exp = 0
                         end += 2
                     }
                     else {
                         if end != start {
-                            let startMinusOne = start - 1
-                            bytes[startMinusOne] = bytes[start]
-                            bytes[start] = 0x2E // .
+                            let fb = start.pointee
+                            start.pointee = 0x2E // .
                             start -= 1
+                            start.pointee = fb
                         }
 
                         exp = 1 - dotPos
 
                         end += 1
-                        bytes[end] = 0x45 // E
+                        end.pointee = 0x45 // E
                         end += 1
-                        bytes[end] = 0x2D // -
+                        end.pointee = 0x2D // -
 
                         end += 2
                         if exp >= 10 {
@@ -960,7 +961,7 @@ extension Decimal64: TextOutputStreamable
                         if exp >= 100 {
                             end += 1
                         }
-                        _ = ll2str( Int64(exp), bytes, end )
+                        _ = ll2str( Int64(exp), end )
                     }
                 }
                 else {
@@ -972,21 +973,20 @@ extension Decimal64: TextOutputStreamable
 
                 exp += end - start //TODO: will it work on 64bit?
 
-                while bytes[end] == 0x30 { // 0
+                while end.pointee == 0x30 { // 0
                     end -= 1
                 }
 
                 if end != start {
-                    let oldstart = start
+                    let fb = start.pointee
+                    start.pointee = 0x2E // .
                     start -= 1
-                    bytes[start] = bytes[oldstart]
-                    // print(oldstart) // code will work with this print statement and in debug mode but unfortunately not in release mode
-                    bytes[oldstart] = 0x2E // .
+                    start.pointee = fb
                 }
                 end += 1
-                bytes[end] = 0x45 // E
+                end.pointee = 0x45 // E
                 end += 1
-                bytes[end] = 0x2B // +
+                end.pointee = 0x2B // +
 
                 end += 2
                 if exp >= 10 {
@@ -995,11 +995,11 @@ extension Decimal64: TextOutputStreamable
                 if exp >= 100 {
                     end += 1
                 }
-                _ = ll2str( Int64(exp), bytes, end )
+                _ = ll2str( Int64(exp), end )
             }
             else {
                 while exp > 0 {
-                    bytes[end] = 0x30 // 0
+                    end.pointee = 0x30 // 0
                     end += 1
                     exp -= 1
                 }
@@ -1007,12 +1007,11 @@ extension Decimal64: TextOutputStreamable
 
             if sign {
                 start -= 1
-                bytes[start] = 0x2D // -
+                start.pointee = 0x2D // -
             }
 
-            bytes[end] = 0 // may be out of bounds
-            let out = UnsafeBufferPointer<UInt8>(start: (bytes.baseAddress! + start).assumingMemoryBound(to: UInt8.self), count: end - start)
-            target._writeASCII(out)
+            end.pointee = 0
+            target._writeASCII(UnsafeBufferPointer<UInt8>(start: start, count: end - start))
         }
     }
 }
@@ -1226,7 +1225,7 @@ extension Decimal64
     ///   - x: The number.
     ///   - end: Pointer to the end of the buffer.
     /// - Returns: Pointer to beginning of the string.
-    private func ll2str(_ x: Int64, _ end: UnsafeMutableRawPointer ) -> UnsafeMutablePointer<UInt8>
+    private func ll2str(_ x: Int64, _ end: UnsafeMutablePointer<UInt8> ) -> UnsafeMutablePointer<UInt8>
     {
         var x = x
         var end = end
@@ -1251,35 +1250,6 @@ extension Decimal64
         end -= dig
 
         memcpy(end, Decimal64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
-
-        return UnsafeMutablePointer<UInt8>.init(OpaquePointer( end))
-    }
-
-    private func ll2str(_ x: Int64, _ bytes: UnsafeMutableRawBufferPointer, _ end: Int ) -> Int
-    {
-        var x = x
-        var end = end
-
-        while x >= 10000 {
-            let y = Int(x % 10000)
-            x /= 10000
-            end -= 4
-            memcpy(bytes.baseAddress! + end, Decimal64.int64LookUp.Pointer + y * 4, 4)
-        }
-
-        var dig = 1
-        if x >= 100 {
-            if x >= 1000 {
-                dig = 4
-            } else {
-                dig = 3
-            }
-        } else if x >= 10 {
-            dig = 2
-        }
-        end -= dig
-
-        memcpy(bytes.baseAddress! + end, Decimal64.int64LookUp.Pointer + Int(x) * 4 + 4 - dig, dig)
 
         return end
     }
@@ -1338,10 +1308,10 @@ extension Decimal64
                 }
                 else {
                     if end != start {
-                        let startMinusOne = start.advanced(by: -1)
-                        startMinusOne.pointee = start.pointee
+                        let fb = start.pointee
                         start.pointee = 0x2E // .
                         start -= 1
+                        start.pointee = fb
                     }
 
                     exp = 1 - dotPos
@@ -1412,30 +1382,28 @@ extension Decimal64
         return start
     }
 
-
-    struct LookUpTable {
-        var Pointer: UnsafeMutableRawPointer
+    class LookUpTable {
+        var Pointer: UnsafeMutablePointer<UInt8>
 
         init() {
-            Pointer = UnsafeMutableRawPointer.allocate( byteCount: 40000, alignment: 8 )
+            Pointer = UnsafeMutablePointer<UInt8>.allocate(capacity: 40000)
             var fill = Pointer
             for i in 0...9999 {
                 var val = i
-                fill.storeBytes(of: UInt8(val / 1000) + 48, as: UInt8.self)
+                fill.pointee = UInt8(val / 1000) + 48
                 val %= 1000
                 fill += 1
-                fill.storeBytes(of: UInt8(val / 100) + 48, as: UInt8.self)
+                fill.pointee = UInt8(val / 100) + 48
                 val %= 100
                 fill += 1
-                fill.storeBytes(of: UInt8(val / 10) + 48, as: UInt8.self)
+                fill.pointee = UInt8(val / 10) + 48
                 val %= 10
                 fill += 1
-                fill.storeBytes(of: UInt8(val) + 48, as: UInt8.self)
+                fill.pointee = UInt8(val) + 48
                 fill += 1
             }
         }
     }
 
     static let int64LookUp = LookUpTable()
-
 }
