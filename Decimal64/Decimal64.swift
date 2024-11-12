@@ -1345,10 +1345,10 @@ extension Decimal64
             }
 
             if end != start {
-                let startMinusOne = start.advanced(by: -1)
-                startMinusOne.pointee = start.pointee
+                let fb = start.pointee
                 start.pointee = 0x2E // .
                 start -= 1
+                start.pointee = fb
             }
             end += 1
             end.pointee = 0x45 // E
